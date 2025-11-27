@@ -6,7 +6,7 @@ import (
 	"strings"
 )
 
-func EditedText(Text string) []string {
+func EditedTex(Text string) []string {
 	// Auto-Correction => Supprimer les espaces et les tabulation inutiles
 	Words := []string{}
 	Word := ""
@@ -26,43 +26,41 @@ func EditedText(Text string) []string {
 		Words = append(Words, Word)
 	}
 
-	// Nouvelle approche : traiter les tags dans l'ordre d'apparition
 	for {
-		// Trouver le premier tag dans tout le texte
-		earliestIndex := -1
-		earliestTag := ""
-		earliestPos := -1 // position dans le mot
-		earliestWordIndex := -1
+		foundIndex := -1
+		foundTag := ""
+		foundPos := -1
+		foundWordIndex := -1
 
-		Tags := []string{"(up)", "(low)", "(bin)", "(hex)", "(cap)"}
+		tags := []string{"(up)", "(low)", "(bin)", "(hex)", "(cap)"}
 
-		// Parcourir tous les mots pour trouver le tag le plus à gauche
-		for i, word := range Words {
-			for _, tag := range Tags {
-				pos := strings.Index(word, tag)
-				if pos != -1 {
-					if earliestIndex == -1 || i < earliestWordIndex || (i == earliestWordIndex && pos < earliestPos) {
-						earliestIndex = i
-						earliestTag = tag
-						earliestPos = pos
-						earliestWordIndex = i
+		for wordIndex, word := range Words {
+			for _, tag := range tags {
+				position := strings.Index(word, tag)
+				if position != -1 {
+					if foundIndex == -1 || wordIndex < foundWordIndex || (wordIndex == foundWordIndex && position < foundPos) {
+						foundIndex = wordIndex
+						foundTag = tag
+						foundPos = position
+						foundWordIndex = wordIndex
 					}
 				}
 			}
 		}
 
-		// Si aucun tag trouvé, sortir de la boucle
-		if earliestIndex == -1 {
+		// Sortir si aucun tag n'a été trouvé
+		if foundIndex == -1 {
 			break
 		}
-
-		// Traiter le tag trouvé
-		i := earliestIndex
-		tag := earliestTag
-		pos := earliestPos
+		// Traitement du tag trouvé
+		i := foundIndex
+		tag := foundTag
+		pos := foundPos
 
 		WordBefore := Words[i][:pos]
+		
 		WordAfter := Words[i][pos+len(tag):]
+
 
 		index := i - 1
 
@@ -103,7 +101,7 @@ func EditedText(Text string) []string {
 					}
 				} else {
 					Words[i] = WordAfter
-				}// Devrait donner ["HELLOWORLD"]
+				} // Devrait donner ["HELLOWORLD"]
 			} else {
 				Words[i] = WordAfter
 			}
@@ -111,7 +109,7 @@ func EditedText(Text string) []string {
 		} else if WordBefore == "\n" {
 			if i > 0 {
 				WordBefore = Words[index]
-// Devrait donner ["HELLOWORLD"]
+				// Devrait donner ["HELLOWORLD"]
 				for WordBefore == "\n" && index > 0 {
 					index--
 					WordBefore = Words[index]
@@ -147,7 +145,6 @@ func EditedText(Text string) []string {
 			}
 
 		} else {
-			// Le tag est au milieu d'un mot
 			switch tag {
 			case "(up)":
 				Words[i] = strings.ToUpper(WordBefore) + WordAfter
@@ -161,10 +158,8 @@ func EditedText(Text string) []string {
 				if err == nil {
 					Words[i] = strconv.FormatInt(t, 10) + WordAfter
 				} else {
-					// Si pas valide, on garde WordBefore tel quel
 					Words[i] = WordBefore + WordAfter
 				}
-				
 
 			case "(hex)":
 				t, _ := strconv.ParseInt(WordBefore, 16, 64)
@@ -177,7 +172,6 @@ func EditedText(Text string) []string {
 			}
 		}
 
-		// Si le mot devient vide après suppression du tag, le retirer
 		if Words[i] == "" {
 			Words = append(Words[:i], Words[i+1:]...)
 		}
@@ -187,7 +181,7 @@ func EditedText(Text string) []string {
 }
 
 func main() {
-	result := EditedText("10 (bin) \n 10 (bin) jh \npp")
+	result := EditedTex("1zdjhbfjhbf0\n(low)(up)kjnfkjnf(up)")
 	fmt.Println(result)
 
 }
