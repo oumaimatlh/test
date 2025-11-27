@@ -1,0 +1,57 @@
+package main
+
+import "strings"
+
+func LowerCase(words *[]string, wordBefore,wordAfter string, i,j int) []string {
+	if len(wordBefore) == 0 {
+		if i > 0 {
+			wordBefore = (*words)[j]
+			for (wordBefore == "\n" || wordBefore == "") && j >= 0 || !CheckWord(wordBefore) {
+				j--
+				if j >= 0 {
+					wordBefore = (*words)[j]
+				}
+			}
+			(*words)[j] = strings.ToLower(wordBefore)
+			(*words)[i] = wordAfter
+
+		} else {
+			(*words)[i] = wordAfter
+		}
+		//
+	} else if wordBefore == "\n" {
+		if i > 0 {
+			wordBefore = (*words)[j]
+			for (wordBefore == "\n" && j > 0) || !CheckWord(wordBefore) {
+				j--
+				wordBefore = (*words)[j]
+			}
+			(*words)[j] = strings.ToLower(wordBefore)
+			(*words)[i] = "\n" + wordAfter
+		} else {
+			(*words)[i] = "\n" + wordAfter
+		}
+		//
+	} else {
+		if CheckWord(wordBefore) {
+			(*words)[i] = strings.ToLower(wordBefore) + wordAfter
+		} else {
+			if i > 0 {
+				wordBefore = (*words)[j]
+				for (wordBefore == "\n" || wordBefore == "") && j >= 0 || !CheckWord(wordBefore) {
+					j--
+					if j >= 0 {
+						wordBefore = (*words)[j]
+					}
+				}
+				(*words)[j] = strings.ToLower(wordBefore)
+				(*words)[i] = wordAfter
+
+			} else {
+				(*words)[i] = wordBefore + wordAfter
+			}
+		}
+
+	}
+	return  *words
+}
