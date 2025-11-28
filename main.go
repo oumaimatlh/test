@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"regexp"
 	"strings"
 )
 
@@ -29,11 +30,17 @@ func EditedText(Text string) []string {
 		tag := ""
 		position := -1
 
-		tags := []string{"(up)", "(low)", "(bin)", "(hex)", "(cap)"}
+		tags := []string{"(up)", "(low)", "(bin)", "(hex)", "(cap)", `^\((up|low|cap), [0-9]+\)$`}
 
 		for i, word := range words {
-			for _, t := range tags {
+			for q, t := range tags {
+				if q == len(tags)-1 {
+					if regexp.MustCompile(t).MatchString(word) {
+						fmt.Println("Match !")
+					}
+				}
 				pos := strings.Index(word, t)
+
 				if pos != -1 {
 					if wordIndex == -1 || i < wordIndex || (i == wordIndex && pos < position) {
 						wordIndex = i
@@ -80,6 +87,6 @@ func EditedText(Text string) []string {
 }
 
 func main() {
-	result := EditedText("AD\n1E(cap)")
+	result := EditedText("(up, 2)")
 	fmt.Println(result)
 }

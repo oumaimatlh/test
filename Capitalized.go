@@ -1,9 +1,8 @@
 package main
-
 import (
-	//"strings"
 	"unicode"
 )
+
 func capitalizeWord(s string) string {  
     letters := []rune(s)
     check := false

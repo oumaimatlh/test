@@ -1,8 +1,5 @@
 package main
-
 import "strconv"
-
-//import "strings"
 
 func ConvertBinary(s string) string {
 
