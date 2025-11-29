@@ -18,7 +18,7 @@ func ConvertHexaDecimal(s string) string {
 	return strconv.FormatInt(t, 10)
 }
 
-func HexaDecimal(words *[]string, wordBefore,wordAfter string, i,j int) []string {
+func HexaDecimal(words *[]string, wordBefore,wordAfter string, i,j, position int) []string {
 	if len(wordBefore) == 0 {
 		if i > 0 {
 			wordBefore = (*words)[j]
@@ -61,8 +61,7 @@ func HexaDecimal(words *[]string, wordBefore,wordAfter string, i,j int) []string
 					}
 				}
 				(*words)[j] = ConvertHexaDecimal(wordBefore)
-				(*words)[i] = wordAfter
-
+				(*words)[i] = (*words)[i][:position] + wordAfter
 			} else {
 				(*words)[i] =wordBefore + wordAfter
 			}

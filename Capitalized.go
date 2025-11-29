@@ -20,7 +20,7 @@ func capitalizeWord(s string) string {
     return string(letters)
 }
 
-func Capitalized(words *[]string, wordBefore, wordAfter string, i, j int) []string {
+func Capitalized(words *[]string, wordBefore, wordAfter string, i, j, position int) []string {
 	if len(wordBefore) == 0 {
 		if i > 0 {
 			wordBefore = (*words)[j]
@@ -58,14 +58,14 @@ func Capitalized(words *[]string, wordBefore, wordAfter string, i, j int) []stri
 		} else {
 			if i > 0 {
 				wordBefore = (*words)[j]
-				for (wordBefore == "\n" || wordBefore == "") && j >= 0 || !CheckWord(wordBefore) {
+				for (wordBefore == "\n" || wordBefore == "" || !CheckWord(wordBefore)) && j >= 0  {
 					j--
 					if j >= 0 {
 						wordBefore = (*words)[j]
 					}
 				}
 				(*words)[j] = capitalizeWord(wordBefore)
-				(*words)[i] = wordAfter
+				(*words)[i] = (*words)[i][:position] + wordAfter
 
 			} else {
 				(*words)[i] =capitalizeWord(wordBefore) + wordAfter

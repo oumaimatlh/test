@@ -2,7 +2,7 @@ package main
 
 import "strings"
 
-func LowerCase(words *[]string, wordBefore,wordAfter string, i,j int) []string {
+func LowerCase(words *[]string, wordBefore,wordAfter string, i,j, position int) []string {
 	if len(wordBefore) == 0 {
 		if i > 0 {
 			wordBefore = (*words)[j]
@@ -45,7 +45,7 @@ func LowerCase(words *[]string, wordBefore,wordAfter string, i,j int) []string {
 					}
 				}
 				(*words)[j] = strings.ToLower(wordBefore)
-				(*words)[i] = wordAfter
+				(*words)[i] = (*words)[i][:position] + wordAfter
 
 			} else {
 				(*words)[i] = wordBefore + wordAfter

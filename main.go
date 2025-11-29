@@ -2,91 +2,34 @@ package main
 
 import (
 	"fmt"
-	"regexp"
-	"strings"
+	"os"
 )
 
-func EditedText(Text string) []string {
-	words := []string{}
-	word := ""
-	check := false
-
-	for _, r := range Text {
-		if r != '\t' && r != ' ' {
-			word += string(r)
-			check = true
-		} else if check {
-			words = append(words, word)
-			word = ""
-			check = false
-		}
-	}
-	if word != "" {
-		words = append(words, word)
-	}
-
-	for {
-		wordIndex := -1
-		tag := ""
-		position := -1
-
-		tags := []string{"(up)", "(low)", "(bin)", "(hex)", "(cap)", `^\((up|low|cap), [0-9]+\)$`}
-
-		for i, word := range words {
-			for q, t := range tags {
-				if q == len(tags)-1 {
-					if regexp.MustCompile(t).MatchString(word) {
-						fmt.Println("Match !")
-					}
-				}
-				pos := strings.Index(word, t)
-
-				if pos != -1 {
-					if wordIndex == -1 || i < wordIndex || (i == wordIndex && pos < position) {
-						wordIndex = i
-						tag = t
-						position = pos
-					}
-				}
-			}
-		}
-
-		if wordIndex == -1 {
-			break
-		}
-		i := wordIndex
-
-		wordBefore := words[i][:position]
-		wordAfter := words[i][position+len(tag):]
-
-		j := i - 1
-
-		switch tag {
-		case "(up)":
-			UpperCase(&words, wordBefore, wordAfter, i, j)
-			//
-		case "(low)":
-			LowerCase(&words, wordBefore, wordAfter, i, j)
-			//
-		case "(cap)":
-			Capitalized(&words, wordBefore, wordAfter, i, j)
-			//
-		case "(bin)":
-			BinaryDecimal(&words, wordBefore, wordAfter, i, j)
-			//
-		case "(hex)":
-			HexaDecimal(&words, wordBefore, wordAfter, i, j)
-
-		}
-
-		if words[i] == "" {
-			words = append(words[:i], words[i+1:]...)
-		}
-	}
-	return words
-}
-
+/**
+*Gestion du traitement du fichier d'entrée et d sortie
+*/
 func main() {
-	result := EditedText("(up, 2)")
-	fmt.Println(result)
+	// Acess to the Arguments of Program
+	if len(os.Args[1:]) != 2 {
+		fmt.Println("Two Arguments =>  <input file> <output file> !!!")
+	}
+	InputFile := os.Args[1:][0]
+	OutputFile := os.Args[1:][1]
+
+	// Read the content of Input File ex : sample.txt
+	ContentInputFile, err := os.ReadFile(string(InputFile))
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+
+	// Completion/Editing/Auto-correction
+	EditingContent := EditedText(string(ContentInputFile))
+
+	// write the edited content  to the output file ex : result.txt
+	err = os.WriteFile(OutputFile, []byte(EditingContent), 0o644)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
 }
