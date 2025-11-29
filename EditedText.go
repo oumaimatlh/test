@@ -2,7 +2,8 @@ package main
 
 import (
 	"fmt"
-	"regexp"
+	//"regexp"
+	"strconv"
 	"strings"
 )
 
@@ -29,19 +30,46 @@ func EditedText(Text string) string {
 		wordIndex := -1
 		tag := ""
 		position := -1
+		tagNumber := 0
 
-		tags := []string{"(up)", "(low)", "(bin)", "(hex)", "(cap)", `^\((up|low|cap), [0-9]+\)$`}
+		tags := []string{"(up)", "(low)", "(bin)", "(hex)", "(cap)", "(up,", "(low,", "(cap,"}
 
 		for i, word := range words {
 			for q, t := range tags {
-				if q == len(tags)-1 {
-					if regexp.MustCompile(t).MatchString(word) {
-						fmt.Println("Match !")
-					}
-				}
+
 				pos := strings.Index(word, t)
 
+				//TagNumber (<tag>, <number>)
+				if (q == 5 || q == 6 || q == 7) && pos != -1 {
+					s := ""
+					for _, r := range words[i+1] {
+						if r != ')' {
+							s += string(r)
+						} else {
+							break
+						}
+
+					}
+
+					if len(s) < len(words[1+i]) {
+						if words[i+1][len(s)] == ')' {
+							number, err := strconv.Atoi(s)
+							if err != nil {
+								continue
+							} else {
+								tagNumber = number
+								fmt.Println(tagNumber)
+							}
+						} else {
+							continue
+						}
+					} else {
+						continue
+					}
+
+				}
 				if pos != -1 {
+
 					if wordIndex == -1 || i < wordIndex || (i == wordIndex && pos < position) {
 						wordIndex = i
 						tag = t
@@ -63,7 +91,7 @@ func EditedText(Text string) string {
 
 		switch tag {
 		case "(up)":
-			UpperCase(&words, wordBefore, wordAfter, i, j, position)
+			UpperCase(&words, wordBefore, wordAfter, tag, i, j, position, tagNumber)
 			//
 		case "(low)":
 			LowerCase(&words, wordBefore, wordAfter, i, j, position)
@@ -77,6 +105,9 @@ func EditedText(Text string) string {
 		case "(hex)":
 			HexaDecimal(&words, wordBefore, wordAfter, i, j, position)
 
+		case "(up,":
+			UpperCase(&words, wordBefore, wordAfter, tag, i, j, position, tagNumber)
+
 		}
 
 		if words[i] == "" {
@@ -84,9 +115,8 @@ func EditedText(Text string) string {
 		}
 	}
 	newText := ""
-	for _, r:= range words {
+	for _, r := range words {
 		newText += r + " "
 	}
 	return newText
 }
-
