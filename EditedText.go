@@ -90,7 +90,7 @@ func EditedText(Text string) string {
 		j := i - 1
 
 		switch tag {
-		case "(up)":
+		case "(up)" , "(up,":
 			UpperCase(&words, wordBefore, wordAfter, tag, i, j, position, tagNumber)
 			//
 		case "(low)":
@@ -105,8 +105,7 @@ func EditedText(Text string) string {
 		case "(hex)":
 			HexaDecimal(&words, wordBefore, wordAfter, i, j, position)
 
-		case "(up,":
-			UpperCase(&words, wordBefore, wordAfter, tag, i, j, position, tagNumber)
+		
 
 		}
 

@@ -33,20 +33,7 @@ func BinaryDecimal(words *[]string, wordBefore, wordAfter string, i, j, position
 			(*words)[i] = wordAfter
 		}
 		//
-	} else if wordBefore == "\n" {
-		if i > 0 {
-			wordBefore = (*words)[j]
-			for (wordBefore == "\n" && j > 0) || !CheckWord(wordBefore) {
-				j--
-				wordBefore = (*words)[j]
-			}
-			(*words)[j] = ConvertBinary(wordBefore)
-			(*words)[i] = "\n" + wordAfter
-		} else {
-			(*words)[i] = "\n" + wordAfter
-		}
-		//
-	} else {
+	}else {
 		if CheckWord(wordBefore) {
 			(*words)[i] = ConvertBinary(wordBefore) + wordAfter
 		} else {

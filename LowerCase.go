@@ -19,20 +19,7 @@ func LowerCase(words *[]string, wordBefore,wordAfter string, i,j, position int) 
 			(*words)[i] = wordAfter
 		}
 		//
-	} else if wordBefore == "\n" {
-		if i > 0 {
-			wordBefore = (*words)[j]
-			for (wordBefore == "\n" && j > 0) || !CheckWord(wordBefore) {
-				j--
-				wordBefore = (*words)[j]
-			}
-			(*words)[j] = strings.ToLower(wordBefore)
-			(*words)[i] = "\n" + wordAfter
-		} else {
-			(*words)[i] = "\n" + wordAfter
-		}
-		//
-	} else {
+	}else {
 		if CheckWord(wordBefore) {
 			(*words)[i] = strings.ToLower(wordBefore) + wordAfter
 		} else {
