@@ -1,15 +1,12 @@
 package main
 
-import "strconv"
+import (
+	"strconv"
+	//"strings"
+)
 
 func ConvertBinary(s string) string {
-
-	if s[len(s)-1] == '\n' {
-		s = s[:len(s)-1]
-	}
-
 	t, err := strconv.ParseInt(s, 2, 64)
-
 	if err != nil {
 		return s
 	}
@@ -33,7 +30,7 @@ func BinaryDecimal(words *[]string, wordBefore, wordAfter string, i, j, position
 			(*words)[i] = wordAfter
 		}
 		//
-	}else {
+	} else {
 		if CheckWord(wordBefore) {
 			(*words)[i] = ConvertBinary(wordBefore) + wordAfter
 		} else {

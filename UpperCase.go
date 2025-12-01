@@ -12,45 +12,35 @@ func UpperCase(words *[]string, wordBefore, wordAfter, tag string, i, j, positio
 		if len(wordBefore) == 0 {
 			if i > 0 {
 				wordBefore = (*words)[j]
-				for (wordBefore == "\n" || wordBefore == "") && j >= 0 || !CheckWord(wordBefore) {
+				for j >= 0 && ((wordBefore == "\n" || wordBefore == "") || !CheckWord(wordBefore)) {
 					j--
 					if j >= 0 {
 						wordBefore = (*words)[j]
 					}
 				}
-				(*words)[j] = strings.ToUpper(wordBefore)
+				if j >= 0 {
+					(*words)[j] = strings.ToUpper(wordBefore)
+				}
 				(*words)[i] = wordAfter
 
 			} else {
 				(*words)[i] = wordAfter
 			}
-			//
-		} else if wordBefore == "\n" {
-			if i > 0 {
-				wordBefore = (*words)[j]
-				for (wordBefore == "\n" && j > 0) || !CheckWord(wordBefore) {
-					j--
-					wordBefore = (*words)[j]
-				}
-				(*words)[j] = strings.ToUpper(wordBefore)
-				(*words)[i] = "\n" + wordAfter
-			} else {
-				(*words)[i] = "\n" + wordAfter
-			}
-			//
 		} else {
 			if CheckWord(wordBefore) {
 				(*words)[i] = strings.ToUpper(wordBefore) + wordAfter
 			} else {
 				if i > 0 {
 					wordBefore = (*words)[j]
-					for (wordBefore == "\n" || wordBefore == "") && j >= 0 || !CheckWord(wordBefore) {
+					for j >= 0 && ((wordBefore == "\n" || wordBefore == "") || !CheckWord(wordBefore)) {
 						j--
 						if j >= 0 {
 							wordBefore = (*words)[j]
 						}
 					}
-					(*words)[j] = strings.ToUpper(wordBefore)
+					if j >= 0 {
+						(*words)[j] = strings.ToUpper(wordBefore)
+					}
 					(*words)[i] = (*words)[i][:position] + wordAfter
 
 				} else {
@@ -59,58 +49,145 @@ func UpperCase(words *[]string, wordBefore, wordAfter, tag string, i, j, positio
 			}
 
 		}
+		/////
+
 	} else {
 		//Case = > "(up, <number>)"
 		var pos int
 		for p, r := range (*words)[i+1] {
 			if r == ')' {
 				pos = p + 1
-
 				break
 			}
 		}
+
+		if tagNumber <= 0 {
+			if len(wordBefore) == 0 {
+				(*words)[i] = wordAfter + (*words)[i+1][pos:]
+			} else {
+				(*words)[i] = wordBefore + (*words)[i+1][pos:]
+			}
+			(*words)[i+1] = ""
+			return *words
+		}
+
 		if len(wordBefore) == 0 {
 			if i > 0 {
 				wordBefore = (*words)[j]
-				for (wordBefore == "\n" || wordBefore == "") && j >= 0 || !CheckWord(wordBefore) {
+				for j >= 0 && ((wordBefore == "\n" || wordBefore == "") || !CheckWord(wordBefore)) {
 					j--
 					if j >= 0 {
 						wordBefore = (*words)[j]
 					}
 				}
 
-				for i := 1; i <= tagNumber && j >= 0; i++ {
+				for count := 1; count <= tagNumber && j >= 0; count++ {
 					(*words)[j] = strings.ToUpper(wordBefore)
 					if j > 0 {
 						j--
-						wordBefore = (*words)[j]
-						for j >= 0 && ((wordBefore == "\n" || wordBefore == "") || !CheckWord(wordBefore)) {
-							j--
-							if j >= 0 {
-								wordBefore = (*words)[j]
-							} else {
-								break
+						if j >= 0 {
+							wordBefore = (*words)[j]
+							for j >= 0 && ((wordBefore == "\n" || wordBefore == "") || !CheckWord(wordBefore)) {
+								j--
+								if j >= 0 {
+									wordBefore = (*words)[j]
+								} else {
+									break
+								}
 							}
 						}
 					} else {
 						break
 					}
 				}
+
 				(*words)[i] = wordAfter
 				(*words)[i+1] = (*words)[i+1][pos:]
 
 			} else {
 				(*words)[i] = wordAfter
 				(*words)[i+1] = (*words)[i+1][pos:]
-
 			}
-			//
 
-		}else {
-			
+		} else {
+			if CheckWord(wordBefore) {
 
+				(*words)[i] = strings.ToUpper(wordBefore) + (*words)[i+1][pos:]
+
+				if i > 0 {
+					wordBefore = (*words)[j]
+					for j >= 0 && ((wordBefore == "\n" || wordBefore == "") || !CheckWord(wordBefore)) {
+						j--
+						if j >= 0 {
+							wordBefore = (*words)[j]
+						}
+					}
+
+					for count := 1; count <= tagNumber-1 && j >= 0; count++ {
+						(*words)[j] = strings.ToUpper(wordBefore) 
+						if j > 0 {
+							j--
+							if j >= 0 {
+								wordBefore = (*words)[j]
+								for j >= 0 && ((wordBefore == "\n" || wordBefore == "") || !CheckWord(wordBefore)) {
+									j--
+									if j >= 0 {
+										wordBefore = (*words)[j]
+									} else {
+										break
+									}
+								}
+							}
+						} else {
+							break
+						}
+					}
+
+					(*words)[i+1] = ""
+
+				} else {
+					(*words)[i] = strings.ToUpper(wordBefore) + (*words)[i+1][pos:]
+					(*words)[i+1] = ""
+				}
+			} else {
+				if i > 0 {
+					wordBefore = (*words)[j]
+					for j >= 0 && ((wordBefore == "\n" || wordBefore == "") || !CheckWord(wordBefore)) {
+						j--
+						if j >= 0 {
+							wordBefore = (*words)[j]
+						}
+					}
+
+					for count := 1; count <= tagNumber && j >= 0; count++ {
+						(*words)[j] = strings.ToUpper(wordBefore) 
+						if j > 0 {
+							j--
+							if j >= 0 {
+								wordBefore = (*words)[j]
+								for j >= 0 && ((wordBefore == "\n" || wordBefore == "") || !CheckWord(wordBefore)) {
+									j--
+									if j >= 0 {
+										wordBefore = (*words)[j]
+									} else {
+										break
+									}
+								}
+							}
+						} else {
+							break
+						}
+					}
+
+					(*words)[i] = (*words)[i][:position]+(*words)[i+1][pos:]
+					(*words)[i+1] =""
+
+				} else {
+					(*words)[i] = wordBefore +(*words)[i+1][pos:]
+					(*words)[i+1] = ""
+				}
+			}
 		}
-
 	}
 	return *words
 }

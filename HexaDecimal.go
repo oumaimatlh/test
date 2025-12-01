@@ -1,24 +1,21 @@
 package main
 
-import "strconv"
+import (
+	"strconv"
+	//"strings"
+)
 
 //import "strings"
 
 func ConvertHexaDecimal(s string) string {
-
-	if s[len(s)-1] == '\n' {
-		s = s[:len(s)-1]
-	}
-
-	t, err := strconv.ParseInt(s, 16,64)
-
+	t, err := strconv.ParseInt(s, 16, 64)
 	if err != nil {
 		return s
 	}
 	return strconv.FormatInt(t, 10)
 }
 
-func HexaDecimal(words *[]string, wordBefore,wordAfter string, i,j, position int) []string {
+func HexaDecimal(words *[]string, wordBefore, wordAfter string, i, j, position int) []string {
 	if len(wordBefore) == 0 {
 		if i > 0 {
 			wordBefore = (*words)[j]
@@ -35,7 +32,7 @@ func HexaDecimal(words *[]string, wordBefore,wordAfter string, i,j, position int
 			(*words)[i] = wordAfter
 		}
 		//
-	}else {
+	} else {
 		if CheckWord(wordBefore) {
 			(*words)[i] = ConvertHexaDecimal(wordBefore) + wordAfter
 		} else {
@@ -50,10 +47,10 @@ func HexaDecimal(words *[]string, wordBefore,wordAfter string, i,j, position int
 				(*words)[j] = ConvertHexaDecimal(wordBefore)
 				(*words)[i] = (*words)[i][:position] + wordAfter
 			} else {
-				(*words)[i] =wordBefore + wordAfter
+				(*words)[i] = wordBefore + wordAfter
 			}
 		}
 
 	}
-	return  *words
+	return *words
 }
