@@ -2,12 +2,12 @@ package main
 
 import (
 	//"regexp"
-	//"fmt"
+	"fmt"
 	"strconv"
 	"strings"
 )
 
-func EditedText(Text string) string {
+func Edited(Text string) string {
 	words := []string{}
 	word := ""
 	check := false
@@ -31,20 +31,31 @@ func EditedText(Text string) string {
 		words = append(words, word)
 	}
 
+	fmt.Println(words)
 	for {
 		wordIndex := -1
 		tag := ""
 		position := -1
 		tagNumber := 0
 
-		tags := []string{"(up)", "(low)", "(bin)", "(hex)", "(cap)", "(up,", "(low,", "(cap,", ".", ",", "!", "?", ":", ";"}
+		tags := []string{"(up)", "(low)", "(bin)", "(hex)", "(cap)", "(up,", "(low,", "(cap,", ".", ",", "!", "?", ":", ";", "a", "A"}
 		for i, word := range words {
 			n := 0
 
 			for q, t := range tags {
+				fmt.Print(t)
 				pos := strings.Index(word, t)
 
-				//Manipulation d (tag, <Number>):
+				if i < len(words)-1 {
+					firstLetter := strings.ToLower(string(words[i+1][0]))
+
+					if (t == "a" && words[i] != "a") || (t == "A" && words[i] != "A") || !strings.ContainsAny(firstLetter, "aeiouh") {
+						continue
+					}
+				}else {
+					continue
+				}
+
 				if (q == 5 || q == 6 || q == 7) && pos != -1 {
 					if len(words[i][pos+len(t):]) == 0 {
 						if i+1 < len(words) {
@@ -65,15 +76,12 @@ func EditedText(Text string) string {
 									} else {
 										n = number
 									}
-									//
 								} else {
 									continue
 								}
-
 							} else {
 								continue
 							}
-
 						} else {
 							continue
 						}
@@ -81,13 +89,12 @@ func EditedText(Text string) string {
 						continue
 					}
 				}
-				//Manipulation Ponctuation
 				if (q == 8 || q == 9 || q == 10 || q == 11 || q == 12 || q == 13) && pos != -1 {
 					if len(words[i][:pos]) > 0 && len(words[i][pos+len(t):]) == 0 || (i == 0 && len(words[i][:pos]) == 0 && len(words[i][pos+len(t):]) >= 0) {
 						continue
 					}
 				}
-				
+
 				if pos != -1 {
 					if wordIndex == -1 || i < wordIndex || (i == wordIndex && pos < position) {
 						wordIndex = i
@@ -112,7 +119,8 @@ func EditedText(Text string) string {
 		switch tag {
 		case "(up)", "(up,":
 			UpperCase(&words, wordBefore, wordAfter, tag, i, j, position, tagNumber)
-
+			
+			//
 		case "(low)", "(low,":
 			LowerCase(&words, wordBefore, wordAfter, tag, i, j, position, tagNumber)
 			//
@@ -124,11 +132,12 @@ func EditedText(Text string) string {
 			//
 		case "(hex)":
 			HexaDecimal(&words, wordBefore, wordAfter, i, j, position)
-
+			//
 		case ".", ",", "!", "?", ":", ";":
 			Ponctuations(&words, wordBefore, wordAfter, tag, i, j, position)
 			//
-
+		case "a", "A":
+			ABeforeVowel(&words, i)
 		}
 
 		if words[i] == "" {
@@ -137,13 +146,6 @@ func EditedText(Text string) string {
 
 	}
 
-	// Manipulation = > vowels "a" et "A"
-	for i := 0; i < len(words); i++ {
-		if words[i] == "a" || words[i] == "A" {
-			ABeforeVowel(&words, i)
-		}
-	}
-	
 	newText := ""
 	for i, r := range words {
 		if r == "\n" {
@@ -157,5 +159,6 @@ func EditedText(Text string) string {
 	}
 
 	newText = strings.TrimSpace(newText)
+
 	return newText
 }
