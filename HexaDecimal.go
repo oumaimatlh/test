@@ -5,7 +5,6 @@ import (
 	//"strings"
 )
 
-//import "strings"
 
 func ConvertHexaDecimal(s string) string {
 	t, err := strconv.ParseInt(s, 16, 64)

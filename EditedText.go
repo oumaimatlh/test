@@ -13,7 +13,7 @@ func EditedText(Text string) string {
 	check := false
 
 	for _, r := range Text {
-		if r != '\t' && r != ' ' && r != '\n' && r != '\r'{
+		if r != '\t' && r != ' ' && r != '\n' && r != '\r' {
 			word += string(r)
 			check = true
 		} else {
@@ -38,30 +38,48 @@ func EditedText(Text string) string {
 		position := -1
 		tagNumber := 0
 
-		tags := []string{"(up)", "(low)", "(bin)", "(hex)", "(cap)", "(up,", "(low,", "(cap,"}
+		tags := []string{"(up)", "(low)", "(bin)", "(hex)", "(cap)", "(up,", "(low,", "(cap,", ".", ",", "!", "?", ":", ";", "a", "A"}
 		for i, word := range words {
-			n := 0 
+			n := 0
 
 			for q, t := range tags {
 				pos := strings.Index(word, t)
 
-				if (q == 5 || q == 6 || q == 7) && pos != -1 {
-					s := ""
-					for _, r := range words[i+1] {
-						if r != ')' {
-							s += string(r)
-						} else {
-							break
-						}
-					}
+				if i < len(words)-1 {
+					firstLetter := strings.ToLower(string(words[i+1][0]))
 
-					if len(s) < len(words[1+i]) {
-						if words[i+1][len(s)] == ')' {
-							number, err := strconv.Atoi(s)
-							if err != nil {
-								continue
+					if (t == "a" && words[i] != "a") || (t == "A" && words[i] != "A") || !strings.ContainsAny(firstLetter, "aeiouh") {
+						continue
+					}
+				}else {
+					continue
+				}
+
+				if (q == 5 || q == 6 || q == 7) && pos != -1 {
+					if len(words[i][pos+len(t):]) == 0 {
+						if i+1 < len(words) {
+							s := ""
+							for _, r := range words[i+1] {
+								if r != ')' {
+									s += string(r)
+								} else {
+									break
+								}
+							}
+
+							if len(s) < len(words[1+i]) {
+								if words[i+1][len(s)] == ')' {
+									number, err := strconv.Atoi(s)
+									if err != nil {
+										continue
+									} else {
+										n = number
+									}
+								} else {
+									continue
+								}
 							} else {
-								n = number 
+								continue
 							}
 						} else {
 							continue
@@ -70,6 +88,12 @@ func EditedText(Text string) string {
 						continue
 					}
 				}
+				if (q == 8 || q == 9 || q == 10 || q == 11 || q == 12 || q == 13) && pos != -1 {
+					if len(words[i][:pos]) > 0 && len(words[i][pos+len(t):]) == 0 || (i == 0 && len(words[i][:pos]) == 0 && len(words[i][pos+len(t):]) >= 0) {
+						continue
+					}
+				}
+
 				if pos != -1 {
 					if wordIndex == -1 || i < wordIndex || (i == wordIndex && pos < position) {
 						wordIndex = i
@@ -106,7 +130,12 @@ func EditedText(Text string) string {
 			//
 		case "(hex)":
 			HexaDecimal(&words, wordBefore, wordAfter, i, j, position)
-
+			//
+		case ".", ",", "!", "?", ":", ";":
+			Ponctuations(&words, wordBefore, wordAfter, tag, i, j, position)
+			//
+		case "a", "A":
+			ABeforeVowel(&words, i)
 		}
 
 		if words[i] == "" {
