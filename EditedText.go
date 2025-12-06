@@ -9,7 +9,6 @@ import (
 )
 
 func EditedText(Text string) string {
-
 	words := []string{}
 	word := ""
 	check := false
@@ -32,7 +31,6 @@ func EditedText(Text string) string {
 	if word != "" {
 		words = append(words, word)
 	}
-	Quotes(&words)
 
 	for {
 		wordIndex := -1
@@ -47,7 +45,7 @@ func EditedText(Text string) string {
 			for q, t := range tags {
 				pos := strings.Index(word, t)
 
-				//Manipulation d (tag, <Number>):
+				// Manipulation d (tag, <Number>):
 				if (q == 5 || q == 6 || q == 7) && pos != -1 {
 					if len(words[i][pos+len(t):]) == 0 {
 						if i+1 < len(words) {
@@ -72,7 +70,6 @@ func EditedText(Text string) string {
 								} else {
 									continue
 								}
-
 							} else {
 								continue
 							}
@@ -152,6 +149,8 @@ func EditedText(Text string) string {
 			ABeforeVowel(&words, i)
 		}
 	}
+
+	Quotes(&words)
 
 	newText := ""
 	for i, r := range words {

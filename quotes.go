@@ -7,6 +7,14 @@ import (
 
 func Quotes(words *[]string) []string {
 	for i := 0; i <= len((*words))-1; i++ {
+	if i < len(*words)-1 {
+    if (*words)[i] == "'" && (*words)[i+1] == "'" {
+        (*words)[i] = "''"
+        *words = append((*words)[:i+1], (*words)[i+2:]...)
+        continue 
+    }
+}
+
 		r := (*words)[i]
 		pos := strings.Index(r, "'")
 
@@ -52,7 +60,6 @@ func Quotes(words *[]string) []string {
 						(*words)[i] = (*words)[i][:pos]
 						(*words)[j] = "'" + next
 
-						//
 					}
 				} else if len((*words)[openQuote][:pos]) == 0 && len((*words)[openQuote][pos+len("'"):]) == 0 {
 					if i < len((*words))-1 {
@@ -103,7 +110,7 @@ func Quotes(words *[]string) []string {
 					fmt.Println("cas2")
 
 					if closeQuote > 0 {
-						j = closeQuote-1
+						j = closeQuote - 1
 						prev := (*words)[j]
 						fmt.Println(prev)
 						j = closeQuote - 1
@@ -133,11 +140,11 @@ func Quotes(words *[]string) []string {
 					(*words)[closeQuote+1] = after
 				}
 
-			}else{
+			} else {
 				continue
 			}
 
-			i = closeQuote + 1 
+			i = closeQuote + 1
 		}
 
 	}
