@@ -3,11 +3,13 @@ package main
 import (
 	//"regexp"
 	//"fmt"
+	//"fmt"
 	"strconv"
 	"strings"
 )
 
 func EditedText(Text string) string {
+
 	words := []string{}
 	word := ""
 	check := false
@@ -30,6 +32,7 @@ func EditedText(Text string) string {
 	if word != "" {
 		words = append(words, word)
 	}
+	Quotes(&words)
 
 	for {
 		wordIndex := -1
@@ -81,13 +84,19 @@ func EditedText(Text string) string {
 						continue
 					}
 				}
-				//Manipulation Ponctuation
+				// Manipulation Ponctuation
 				if (q == 8 || q == 9 || q == 10 || q == 11 || q == 12 || q == 13) && pos != -1 {
-					if len(words[i][:pos]) > 0 && len(words[i][pos+len(t):]) == 0 || (i == 0 && len(words[i][:pos]) == 0 && len(words[i][pos+len(t):]) >= 0) {
+					Aftertag := words[i][pos+len(t):]
+
+					if len(words[i][:pos]) > 0 && (len(Aftertag) == 0 ||
+						(Aftertag[0] == '?' || Aftertag[0] == '!' ||
+							Aftertag[0] == '.' || Aftertag[0] == ',' ||
+							Aftertag[0] == ';' || Aftertag[0] == ':')) ||
+						(i == 0 && len(words[i][:pos]) == 0 && len(Aftertag) >= 0) {
 						continue
 					}
 				}
-				
+
 				if pos != -1 {
 					if wordIndex == -1 || i < wordIndex || (i == wordIndex && pos < position) {
 						wordIndex = i
@@ -143,7 +152,7 @@ func EditedText(Text string) string {
 			ABeforeVowel(&words, i)
 		}
 	}
-	
+
 	newText := ""
 	for i, r := range words {
 		if r == "\n" {
