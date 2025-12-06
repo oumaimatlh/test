@@ -2,18 +2,18 @@ package main
 
 import (
 	"fmt"
+	"slices"
 	"strings"
 )
 
+func CheckChar(c byte) bool {
+	return (c >= 'a' && c <= 'z') ||
+		(c >= 'A' && c <= 'Z') ||
+		(c >= '0' && c <= '9') ||
+		c == '_' || c == '-'
+}
 func Quotes(words *[]string) []string {
 	for i := 0; i <= len((*words))-1; i++ {
-	if i < len(*words)-1 {
-    if (*words)[i] == "'" && (*words)[i+1] == "'" {
-        (*words)[i] = "''"
-        *words = append((*words)[:i+1], (*words)[i+2:]...)
-        continue 
-    }
-}
 
 		r := (*words)[i]
 		pos := strings.Index(r, "'")
@@ -25,24 +25,56 @@ func Quotes(words *[]string) []string {
 
 		if pos != -1 {
 
-			if CheckWord((*words)[i][:pos]) && CheckWord((*words)[i][pos+len("'"):]) {
-				continue
+			if len((*words)[i][:pos]) > 0 && len((*words)[i][pos+len("'"):]) > 0 {
+				if CheckChar((*words)[i][:pos][len((*words)[i][:pos])-1]) && CheckChar((*words)[i][pos+len("'"):][0]) {
+					continue
+				}
 			}
 
 			count++
 			pos2 := 0
-			for k := i + 1; k < len((*words)); k++ {
-				r2 := (*words)[k]
-				pos2 = strings.Index(r2, "'")
 
-				if pos2 != -1 {
-					closeQuote = k
-					fmt.Print(closeQuote)
+			// D'abord chercher dans le même mot (après la première quote)
+			pos2 = strings.Index((*words)[i][pos+1:], "'")
 
+			if pos2 != -1 {
+				// Vérifier si la quote est entre 2 caractères (apostrophe interne)
+				actualPos2 := pos + 1 + pos2 // Position réelle dans (*words)[i]
+
+				hasCharBefore := actualPos2 > 0 && CheckChar((*words)[i][actualPos2-1])
+				hasCharAfter := actualPos2 < len((*words)[i])-1 && CheckChar((*words)[i][actualPos2+1])
+
+				if hasCharBefore && hasCharAfter {
+					// C'est une apostrophe interne, chercher dans les mots suivants
+					pos2 = -1
+					for k := i + 1; k < len((*words)); k++ {
+						r2 := (*words)[k]
+						pos2 = strings.Index(r2, "'")
+						if pos2 != -1 {
+							closeQuote = k
+							count++
+							break
+						}
+					}
+				} else {
+					// Les deux quotes sont dans le même mot
+					closeQuote = i
+					pos2 = actualPos2 // Ajuster la position réelle
 					count++
-					break
+				}
+			} else {
+				// Chercher dans les mots suivants
+				for k := i + 1; k < len((*words)); k++ {
+					r2 := (*words)[k]
+					pos2 = strings.Index(r2, "'")
+					if pos2 != -1 {
+						closeQuote = k
+						count++
+						break
+					}
 				}
 			}
+
 			openQuote = i
 			if count == 2 {
 				// Handl Open Quote:
@@ -89,7 +121,7 @@ func Quotes(words *[]string) []string {
 
 				// Handl Close Quote:
 				//
-				fmt.Print(closeQuote)
+				fmt.Println(closeQuote)
 				if len((*words)[closeQuote][:pos2]) == 0 && len((*words)[closeQuote][pos2+len("'"):]) > 0 {
 					fmt.Println("cas1")
 					if closeQuote > 0 {
@@ -131,20 +163,19 @@ func Quotes(words *[]string) []string {
 					fmt.Println("cas3")
 
 					// Sauvegarder la partie après l'apos2trophe
-					after := "'" + (*words)[closeQuote][pos2+len("'"):]
+					after := (*words)[closeQuote][pos2+len("'"):]
 
-					(*words)[closeQuote] = (*words)[closeQuote][:pos2]
+					(*words)[closeQuote] = (*words)[closeQuote][:pos2] + "'"
 
-					*words = append(*words, "")
-					copy((*words)[closeQuote+2:], (*words)[closeQuote+1:])
-					(*words)[closeQuote+1] = after
+					*words = slices.Insert(*words, closeQuote+1, after)
+
 				}
 
 			} else {
 				continue
 			}
 
-			i = closeQuote + 1
+			i = closeQuote
 		}
 
 	}
