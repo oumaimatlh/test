@@ -1,164 +1,135 @@
 package main
 
 import (
-	//"regexp"
 	"fmt"
-	"strconv"
 	"strings"
 )
 
-func Edited(Text string) string {
-	words := []string{}
-	word := ""
-	check := false
+//"fmt"
+//"strings"
 
-	for _, r := range Text {
-		if r != '\t' && r != ' ' && r != '\n' && r != '\r' {
-			word += string(r)
-			check = true
-		} else {
-			if check {
-				words = append(words, word)
-				word = ""
-				check = false
+func Quotess(words *[]string) []string {
+	for i := 0; i <= len((*words))-1; i++ {
+
+		count := 0
+		r := (*words)[i]
+		pos := strings.Index(r, "'")
+		j := i + 1
+		closeQuote := 0
+
+		if r == "'" {
+			count++
+			for k := i + 1; k < len((*words)); k++ {
+				r2 := (*words)[k]
+				if r2 == "'" {
+					closeQuote = k
+					count++
+					break
+				}
 			}
-			if r == '\n' {
-				words = append(words, "\n")
-			}
-		}
-	}
-	if word != "" {
-		words = append(words, word)
-	}
 
-	fmt.Println(words)
-	for {
-		wordIndex := -1
-		tag := ""
-		position := -1
-		tagNumber := 0
+			if count == 2 {
+				// Handl Open Quote
+				if i < len((*words))-1 {
+					next := (*words)[j]
 
-		tags := []string{"(up)", "(low)", "(bin)", "(hex)", "(cap)", "(up,", "(low,", "(cap,", ".", ",", "!", "?", ":", ";", "a", "A"}
-		for i, word := range words {
-			n := 0
-
-			for q, t := range tags {
-				fmt.Print(t)
-				pos := strings.Index(word, t)
-
-				if i < len(words)-1 {
-					firstLetter := strings.ToLower(string(words[i+1][0]))
-
-					if (t == "a" && words[i] != "a") || (t == "A" && words[i] != "A") || !strings.ContainsAny(firstLetter, "aeiouh") {
-						continue
+					for j < len((*words))-1 && (next == "\n" || next == "") {
+						j++
+						next = (*words)[j]
+						fmt.Println(next)
 					}
-				}else {
-					continue
+
+					(*words)[i] = ""
+					(*words)[j] = "'" + next
+
+					//
 				}
 
-				if (q == 5 || q == 6 || q == 7) && pos != -1 {
-					if len(words[i][pos+len(t):]) == 0 {
-						if i+1 < len(words) {
-							s := ""
-							for _, r := range words[i+1] {
-								if r != ')' {
-									s += string(r)
-								} else {
-									break
-								}
-							}
+				// Handl Close
+				j = closeQuote - 1
+				if closeQuote > 0 {
+					prev := (*words)[j]
+					for j > 0 && (prev == "\n" || prev == "") {
+						j--
+						prev = (*words)[j]
+						fmt.Println(prev)
+					}
 
-							if len(s) < len(words[1+i]) {
-								if words[i+1][len(s)] == ')' {
-									number, err := strconv.Atoi(s)
-									if err != nil {
-										continue
-									} else {
-										n = number
-									}
-								} else {
-									continue
-								}
-							} else {
-								continue
-							}
-						} else {
-							continue
+					(*words)[closeQuote] = ""
+					(*words)[j] = prev + "'"
+
+					//
+				}
+				i = closeQuote + 1
+
+			}
+
+			//
+
+		} else if pos != -1 && r != "'" {
+			count++
+			for k := i + 1; k < len((*words)); k++ {
+				r2 := (*words)[k]
+				if r2 == "'" {
+					closeQuote = k
+					count++
+					break
+				}
+			}
+			if count == 2 {
+				// Handl Open Quote
+				if len((*words)[i][:pos]) > 0 && len((*words)[i][pos+len("'"):]) == 0 {
+					if i < len((*words))-1 {
+						next := (*words)[j]
+
+						for j < len((*words))-1 && (next == "\n" || next == "") {
+							j++
+							next = (*words)[j]
+							fmt.Println(next)
 						}
-					} else {
-						continue
-					}
-				}
-				if (q == 8 || q == 9 || q == 10 || q == 11 || q == 12 || q == 13) && pos != -1 {
-					if len(words[i][:pos]) > 0 && len(words[i][pos+len(t):]) == 0 || (i == 0 && len(words[i][:pos]) == 0 && len(words[i][pos+len(t):]) >= 0) {
-						continue
-					}
-				}
 
-				if pos != -1 {
-					if wordIndex == -1 || i < wordIndex || (i == wordIndex && pos < position) {
-						wordIndex = i
-						tag = t
-						position = pos
-						tagNumber = n
+						(*words)[i] = (*words)[i][:pos]
+						(*words)[j] = "'" + next
+
+						//
+					}
+
+					// Handl Close
+					j = closeQuote - 1
+					if closeQuote > 0 {
+						prev := (*words)[j]
+						for j > 0 && (prev == "\n" || prev == "") {
+							j--
+							prev = (*words)[j]
+							fmt.Println(prev)
+						}
+
+						(*words)[closeQuote] = ""
+						(*words)[j] = prev + "'"
+
+						//
+					}
+				} else if len((*words)[i][:pos]) == 0 && len((*words)[i][pos+len("'"):]) >= 0 {
+
+					// Handl Close
+					j = closeQuote - 1
+					if closeQuote > 0 {
+						prev := (*words)[j]
+						for j > 0 && (prev == "\n" || prev == "") {
+							j--
+							prev = (*words)[j]
+							fmt.Println(prev)
+						}
+
+						(*words)[closeQuote] = ""
+						(*words)[j] = prev + "'"
+
+						//
 					}
 				}
 			}
 		}
-
-		if wordIndex == -1 {
-			break
-		}
-		i := wordIndex
-
-		wordBefore := words[i][:position]
-		wordAfter := words[i][position+len(tag):]
-
-		j := i - 1
-
-		switch tag {
-		case "(up)", "(up,":
-			UpperCase(&words, wordBefore, wordAfter, tag, i, j, position, tagNumber)
-			
-			//
-		case "(low)", "(low,":
-			LowerCase(&words, wordBefore, wordAfter, tag, i, j, position, tagNumber)
-			//
-		case "(cap)", "(cap,":
-			Capitalized(&words, wordBefore, wordAfter, tag, i, j, position, tagNumber)
-			//
-		case "(bin)":
-			BinaryDecimal(&words, wordBefore, wordAfter, i, j, position)
-			//
-		case "(hex)":
-			HexaDecimal(&words, wordBefore, wordAfter, i, j, position)
-			//
-		case ".", ",", "!", "?", ":", ";":
-			Ponctuations(&words, wordBefore, wordAfter, tag, i, j, position)
-			//
-		case "a", "A":
-			ABeforeVowel(&words, i)
-		}
-
-		if words[i] == "" {
-			words = append(words[:i], words[i+1:]...)
-		}
-
+		
 	}
-
-	newText := ""
-	for i, r := range words {
-		if r == "\n" {
-			newText += r
-			continue
-		}
-		newText += r
-		if i+1 < len(words) && words[i+1] != "\n" {
-			newText += " "
-		}
-	}
-
-	newText = strings.TrimSpace(newText)
-
-	return newText
+	return *words
 }
