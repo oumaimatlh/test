@@ -52,6 +52,8 @@ func LowerCase(words *[]string, wordBefore, wordAfter, tag string, i, j, positio
 		/////
 
 	} else {
+		//--------------------------------------------//
+
 		//Case = > "(low, <number>)"
 		var pos int
 		for p, r := range (*words)[i+1] {
@@ -124,7 +126,7 @@ func LowerCase(words *[]string, wordBefore, wordAfter, tag string, i, j, positio
 					}
 
 					for count := 1; count <= tagNumber-1 && j >= 0; count++ {
-						(*words)[j] = strings.ToLower(wordBefore) 
+						(*words)[j] = strings.ToLower(wordBefore)
 						if j > 0 {
 							j--
 							if j >= 0 {
@@ -160,7 +162,7 @@ func LowerCase(words *[]string, wordBefore, wordAfter, tag string, i, j, positio
 					}
 
 					for count := 1; count <= tagNumber && j >= 0; count++ {
-						(*words)[j] = strings.ToLower(wordBefore) 
+						(*words)[j] = strings.ToLower(wordBefore)
 						if j > 0 {
 							j--
 							if j >= 0 {
@@ -179,8 +181,8 @@ func LowerCase(words *[]string, wordBefore, wordAfter, tag string, i, j, positio
 						}
 					}
 
-					(*words)[i] = (*words)[i][:position]+(*words)[i+1][pos:]
-					(*words)[i+1] =""
+					(*words)[i] = (*words)[i][:position] + (*words)[i+1][pos:]
+					(*words)[i+1] = ""
 
 				} else {
 					(*words)[i] = wordBefore + wordAfter + (*words)[i+1][pos:]

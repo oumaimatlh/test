@@ -1,10 +1,6 @@
 package main
 
 import (
-	//"regexp"
-	//"fmt"
-	//"fmt"
-	//"fmt"
 	"fmt"
 	"strconv"
 	"strings"
@@ -14,7 +10,6 @@ func EditedText(Text string) string {
 	words := []string{}
 	word := ""
 	check := false
-
 	for _, r := range Text {
 		if r != '\t' && r != ' ' && r != '\n' && r != '\r' {
 			word += string(r)
@@ -43,7 +38,6 @@ func EditedText(Text string) string {
 		tags := []string{"(up)", "(low)", "(bin)", "(hex)", "(cap)", "(up,", "(low,", "(cap,", ".", ",", "!", "?", ":", ";"}
 		for i, word := range words {
 			n := 0
-
 			for q, t := range tags {
 				pos := strings.Index(word, t)
 
@@ -59,7 +53,6 @@ func EditedText(Text string) string {
 									break
 								}
 							}
-
 							if len(s) < len(words[1+i]) {
 								if words[i+1][len(s)] == ')' {
 									number, err := strconv.Atoi(s)
@@ -94,7 +87,6 @@ func EditedText(Text string) string {
 					if len(beforeTag) > 0 && len(Aftertag) == 0 {
 						continue
 					}
-
 					// Skip si au début ET (première ligne OU pas de mot valide avant)
 					if len(beforeTag) == 0 {
 						// Vérifier s'il y a un mot valide avant
@@ -105,13 +97,11 @@ func EditedText(Text string) string {
 								break
 							}
 						}
-
 						// Skip si pas de mot valide avant (début ou que des \n)
 						if !hasValidPrevious {
 							continue
 						}
 					}
-
 					// Skip si après il y a SEULEMENT des ponctuations
 					if len(beforeTag) > 0 && len(Aftertag) > 0 {
 						allPunct := true
@@ -126,6 +116,9 @@ func EditedText(Text string) string {
 						}
 					}
 				}
+
+				//--------------------------------------------//
+
 				if pos != -1 {
 					if wordIndex == -1 || i < wordIndex || (i == wordIndex && pos < position) {
 						wordIndex = i
@@ -136,16 +129,17 @@ func EditedText(Text string) string {
 				}
 			}
 		}
+		//--------------------------------------------//
 
 		if wordIndex == -1 {
 			break
 		}
 		i := wordIndex
-
 		wordBefore := words[i][:position]
 		wordAfter := words[i][position+len(tag):]
-
 		j := i - 1
+
+		//--------------------------------------------//
 
 		switch tag {
 		case "(up)", "(up,":
@@ -168,7 +162,6 @@ func EditedText(Text string) string {
 			//
 
 		}
-
 		if words[i] == "" {
 			words = append(words[:i], words[i+1:]...)
 		}
@@ -185,6 +178,9 @@ func EditedText(Text string) string {
 	//Manipulation des Quotes
 	words = Quotes(words)
 
+	//--------------------------------------------//
+
+	//Auto-Correction
 	newText := ""
 	for i, r := range words {
 		if r == "\n" {
@@ -196,7 +192,8 @@ func EditedText(Text string) string {
 			newText += " "
 		}
 	}
-
 	newText = strings.TrimSpace(newText)
+
+	
 	return newText
 }

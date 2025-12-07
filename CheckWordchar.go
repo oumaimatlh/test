@@ -4,9 +4,10 @@ import (
 	"unicode"
 )
 
+//------CheckWord-----//
 func CheckWord(word string) bool {
 	for _, char := range word {
-		
+
 		if unicode.IsLetter(char) {
 			return true
 		}
@@ -16,6 +17,13 @@ func CheckWord(word string) bool {
 	}
 	return false
 }
-func CheckChar(c byte) bool {
-    return unicode.IsLetter(rune(c))
+
+//------Quote-----//
+func isWordChar(char rune) bool {
+	if unicode.IsLetter(char) || unicode.IsDigit(char) {
+		return true
+	}
+	return false
 }
+
+

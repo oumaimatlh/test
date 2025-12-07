@@ -52,6 +52,8 @@ func UpperCase(words *[]string, wordBefore, wordAfter, tag string, i, j, positio
 		/////
 
 	} else {
+		//--------------------------------------------//
+
 		//Case = > "(up, <number>)"
 		var pos int
 		for p, r := range (*words)[i+1] {
@@ -124,7 +126,7 @@ func UpperCase(words *[]string, wordBefore, wordAfter, tag string, i, j, positio
 					}
 
 					for count := 1; count <= tagNumber-1 && j >= 0; count++ {
-						(*words)[j] = strings.ToUpper(wordBefore) 
+						(*words)[j] = strings.ToUpper(wordBefore)
 						if j > 0 {
 							j--
 							if j >= 0 {
@@ -160,7 +162,7 @@ func UpperCase(words *[]string, wordBefore, wordAfter, tag string, i, j, positio
 					}
 
 					for count := 1; count <= tagNumber && j >= 0; count++ {
-						(*words)[j] = strings.ToUpper(wordBefore) 
+						(*words)[j] = strings.ToUpper(wordBefore)
 						if j > 0 {
 							j--
 							if j >= 0 {
@@ -179,11 +181,11 @@ func UpperCase(words *[]string, wordBefore, wordAfter, tag string, i, j, positio
 						}
 					}
 
-					(*words)[i] = (*words)[i][:position]+(*words)[i+1][pos:]
-					(*words)[i+1] =""
+					(*words)[i] = (*words)[i][:position] + (*words)[i+1][pos:]
+					(*words)[i+1] = ""
 
 				} else {
-					(*words)[i] = wordBefore +(*words)[i+1][pos:]
+					(*words)[i] = wordBefore + (*words)[i+1][pos:]
 					(*words)[i+1] = ""
 				}
 			}

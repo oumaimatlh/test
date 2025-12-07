@@ -2,15 +2,9 @@ package main
 
 import (
 	"strings"
-	"unicode"
 )
 
-func isWordChar(char rune) bool {
-	if unicode.IsLetter(char) || unicode.IsDigit(char) {
-		return true
-	}
-	return false
-}
+
 
 func isPartOfWord(runes []rune, index int) bool {
 	hasCharBefore := index > 0 && isWordChar(runes[index-1])

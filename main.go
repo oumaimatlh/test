@@ -3,26 +3,35 @@ package main
 import (
 	"fmt"
 	"os"
+	"strings"
 )
 
-/**
-*Gestion du traitement du fichier d'entrée et d sortie
-*/
 func main() {
 	// Acess to the Arguments of Program
-	if len(os.Args[1:]) != 2 {
-		fmt.Println("Two Arguments =>  <input file> <output file> !!!")
-	}
-	InputFile := os.Args[1:][0]
-	OutputFile := os.Args[1:][1]
-
-	// Read the content of Input File ex : sample.txt
-	ContentInputFile, err := os.ReadFile(string(InputFile))
-	if err != nil {
-		fmt.Println(err)
+	if len(os.Args) != 3 {
+		fmt.Println("Error: go run .  <input file> <output file> !!!")
 		return
 	}
 
+	InputFile := os.Args[1:][0]
+	OutputFile := os.Args[1:][1]
+
+	if !strings.HasSuffix(strings.ToLower(InputFile), ".txt") {
+		fmt.Println("Error: input file must have .txt extension")
+		return
+	}
+
+	if !strings.HasSuffix(strings.ToLower(OutputFile), ".txt") {
+		fmt.Println("Error: output file must have .txt extension")
+		return
+	}
+
+	ContentInputFile, err := os.ReadFile(InputFile)
+	if err != nil {
+		fmt.Println("Error reading input:", err)
+		return
+	}
+	
 	// Completion/Editing/Auto-correction
 	EditingContent := EditedText(string(ContentInputFile))
 
