@@ -82,6 +82,7 @@ func EditedText(Text string) string {
 					}
 				}
 				// Manipulation Ponctuation
+
 				if (q == 8 || q == 9 || q == 10 || q == 11 || q == 12 || q == 13) && pos != -1 {
 					Aftertag := words[i][pos+len(t):]
 
@@ -149,8 +150,7 @@ func EditedText(Text string) string {
 			ABeforeVowel(&words, i)
 		}
 	}
-
-	Quotes(&words)
+	words = Quotes(words)
 
 	newText := ""
 	for i, r := range words {

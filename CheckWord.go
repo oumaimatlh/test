@@ -1,7 +1,6 @@
 package main
 
 import (
-	
 	"unicode"
 )
 
@@ -16,4 +15,7 @@ func CheckWord(word string) bool {
 		}
 	}
 	return false
+}
+func CheckChar(c byte) bool {
+    return unicode.IsLetter(rune(c))
 }
