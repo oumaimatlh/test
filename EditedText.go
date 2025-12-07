@@ -4,6 +4,8 @@ import (
 	//"regexp"
 	//"fmt"
 	//"fmt"
+	//"fmt"
+	"fmt"
 	"strconv"
 	"strings"
 )
@@ -82,19 +84,48 @@ func EditedText(Text string) string {
 					}
 				}
 				// Manipulation Ponctuation
-
 				if (q == 8 || q == 9 || q == 10 || q == 11 || q == 12 || q == 13) && pos != -1 {
+					beforeTag := words[i][:pos]
 					Aftertag := words[i][pos+len(t):]
 
-					if len(words[i][:pos]) > 0 && (len(Aftertag) == 0 ||
-						(Aftertag[0] == '?' || Aftertag[0] == '!' ||
-							Aftertag[0] == '.' || Aftertag[0] == ',' ||
-							Aftertag[0] == ';' || Aftertag[0] == ':')) ||
-						(i == 0 && len(words[i][:pos]) == 0 && len(Aftertag) >= 0) {
+					fmt.Println(Aftertag)
+
+					// Skip si ponctuation à la fin
+					if len(beforeTag) > 0 && len(Aftertag) == 0 {
 						continue
 					}
-				}
 
+					// Skip si au début ET (première ligne OU pas de mot valide avant)
+					if len(beforeTag) == 0 {
+						// Vérifier s'il y a un mot valide avant
+						hasValidPrevious := false
+						for k := i - 1; k >= 0; k-- {
+							if words[k] != "\n" && words[k] != "" {
+								hasValidPrevious = true
+								break
+							}
+						}
+
+						// Skip si pas de mot valide avant (début ou que des \n)
+						if !hasValidPrevious {
+							continue
+						}
+					}
+
+					// Skip si après il y a SEULEMENT des ponctuations
+					if len(beforeTag) > 0 && len(Aftertag) > 0 {
+						allPunct := true
+						for _, r := range Aftertag {
+							if r != '?' && r != '!' && r != '.' && r != ',' && r != ';' && r != ':' {
+								allPunct = false
+								break
+							}
+						}
+						if allPunct {
+							continue
+						}
+					}
+				}
 				if pos != -1 {
 					if wordIndex == -1 || i < wordIndex || (i == wordIndex && pos < position) {
 						wordIndex = i
@@ -150,6 +181,8 @@ func EditedText(Text string) string {
 			ABeforeVowel(&words, i)
 		}
 	}
+
+	//Manipulation des Quotes
 	words = Quotes(words)
 
 	newText := ""
