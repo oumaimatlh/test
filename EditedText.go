@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"strconv"
 	"strings"
 )
@@ -80,8 +79,6 @@ func EditedText(Text string) string {
 				if (q == 8 || q == 9 || q == 10 || q == 11 || q == 12 || q == 13) && pos != -1 {
 					beforeTag := words[i][:pos]
 					Aftertag := words[i][pos+len(t):]
-
-					fmt.Println(Aftertag)
 
 					// Skip si ponctuation à la fin
 					if len(beforeTag) > 0 && len(Aftertag) == 0 {
@@ -175,25 +172,41 @@ func EditedText(Text string) string {
 		}
 	}
 
-	//Manipulation des Quotes
+	// Manipulation des Quotes
 	words = Quotes(words)
 
 	//--------------------------------------------//
 
-	//Auto-Correction
+	// Nettoyer chaque mot des espaces aux extrémités
+	for i := range words {
+		if words[i] != "\n" {
+			words[i] = strings.TrimSpace(words[i])
+		}
+	}
+
 	newText := ""
-	for i, r := range words {
-		if r == "\n" {
-			newText += r
+	for i, word := range words {
+		if word == "\n" {
+			if len(newText) > 0 && newText[len(newText)-1] == ' ' {
+				newText = newText[:len(newText)-1]
+			}
+			newText += word
 			continue
 		}
-		newText += r
+
+		newText += word
+
 		if i+1 < len(words) && words[i+1] != "\n" {
 			newText += " "
 		}
 	}
-	newText = strings.TrimSpace(newText)
 
-	
+	// Nettoyer chaque ligne individuellement
+	lines := strings.Split(newText, "\n")
+	for i, line := range lines {
+		lines[i] = strings.Join(strings.Fields(line), " ")
+	}
+	newText = strings.Join(lines, "\n")
+
 	return newText
 }
